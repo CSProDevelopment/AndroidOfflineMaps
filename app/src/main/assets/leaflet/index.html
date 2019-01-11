@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+	<link href="leaflet.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="fontawesome/css/all.css">
+	<link rel="stylesheet" href="L.Control.Locate.min.css" />
+
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+	<script  src="fontawesome/js/all.js"></script>
+    <script  src="leaflet.js"></script>
+	<!--<script  src="sql.js"></script>
+	<script  src="Leaflet.TileLayer.MBTiles.js"></script> -->
+	<script type="text/javascript"  src="Leaflet.VectorGrid.bundled.js"></script>
+	<script  src="L.Control.Locate.js" charset="utf-8"></script>
+
+    <script>
+	
+	var map = new L.Map('map', {maxBoundsViscosity: 1.0, bounceAtZoomLimits: false});
+	var locateControl = L.control.locate({flyTo: true, icon:"fas fa-map-marker-alt"}).addTo(map);
+	var tileLayer = null;
+	
+	function clearLayers()
+	{
+		map.eachLayer(function (layer) {map.removeLayer(layer);} );
+	}
+	
+	function addRasterLayer(url, bounds, minZoom, maxZoom, attribution)
+	{
+		if (tileLayer != null)
+			map.removeLayer(tileLayer);
+			
+		tileLayer = L.tileLayer( url, {
+				attribution: attribution,
+			}
+		).addTo( map );
+		map.setMinZoom(minZoom);
+		map.setMaxZoom(maxZoom);
+		//map.setMaxBounds(bounds);
+		//map.fitBounds(bounds);
+	
+		map.removeControl(locateControl);
+		locateControl = L.control.locate({flyTo: true, icon:"fas fa-map-marker-alt", locateOptions: {maxZoom: maxZoom}}).addTo(map);
+		
+	}
+	
+	
+
+		var vectorTileStyling = {
+
+			water: {
+				fill: true,
+				weight: 1,
+				fillColor: '#06cccc',
+				color: '#06cccc',
+				fillOpacity: 0.2,
+				opacity: 0.4,
+			},
+			admin: {
+				weight: 1,
+				fillColor: 'pink',
+				color: 'pink',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			waterway: {
+				weight: 1,
+				fillColor: '#2375e0',
+				color: '#2375e0',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			landcover: {
+				fill: true,
+				weight: 1,
+				fillColor: '#53e033',
+				color: '#53e033',
+				fillOpacity: 0.2,
+				opacity: 0.4,
+			},
+			landuse: {
+				fill: true,
+				weight: 1,
+				fillColor: '#e5b404',
+				color: '#e5b404',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			park: {
+				fill: true,
+				weight: 1,
+				fillColor: '#84ea5b',
+				color: '#84ea5b',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			boundary: {
+				weight: 1,
+				fillColor: '#c545d3',
+				color: '#c545d3',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			aeroway: {
+				weight: 1,
+				fillColor: '#51aeb5',
+				color: '#51aeb5',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			road: {	// mapbox & nextzen only
+				weight: 1,
+				fillColor: '#f2b648',
+				color: '#f2b648',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			tunnel: {	// mapbox only
+				weight: 0.5,
+				fillColor: '#f2b648',
+				color: '#f2b648',
+				fillOpacity: 0.2,
+				opacity: 0.4,
+// 					dashArray: [4, 4]
+			},
+			bridge: {	// mapbox only
+				weight: 0.5,
+				fillColor: '#f2b648',
+				color: '#f2b648',
+				fillOpacity: 0.2,
+				opacity: 0.4,
+// 					dashArray: [4, 4]
+			},
+			transportation: {	// openmaptiles only
+				weight: 0.5,
+				fillColor: '#f2b648',
+				color: '#f2b648',
+				fillOpacity: 0.2,
+				opacity: 0.4,
+// 					dashArray: [4, 4]
+			},
+			transit: {	// nextzen only
+				weight: 0.5,
+				fillColor: '#f2b648',
+				color: '#f2b648',
+				fillOpacity: 0.2,
+				opacity: 0.4,
+// 					dashArray: [4, 4]
+			},
+			building: {
+				fill: true,
+				weight: 1,
+				fillColor: '#2b2b2b',
+				color: '#2b2b2b',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			water_name: {
+				weight: 1,
+				fillColor: '#022c5b',
+				color: '#022c5b',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			transportation_name: {
+				weight: 1,
+				fillColor: '#bc6b38',
+				color: '#bc6b38',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			place: {
+				weight: 1,
+				fillColor: '#f20e93',
+				color: '#f20e93',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			housenumber: {
+				weight: 1,
+				fillColor: '#ef4c8b',
+				color: '#ef4c8b',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			poi: {
+				weight: 1,
+				fillColor: '#3bb50a',
+				color: '#3bb50a',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+			earth: {	// nextzen only
+				fill: true,
+				weight: 1,
+				fillColor: '#c0c0c0',
+				color: '#c0c0c0',
+				fillOpacity: 0.2,
+				opacity: 0.4
+			},
+
+
+			// Do not symbolize some stuff for mapbox
+			country_label: [],
+			marine_label: [],
+			state_label: [],
+			place_label: [],
+			waterway_label: [],
+			poi_label: [],
+			road_label: [],
+			housenum_label: [],
+
+
+			// Do not symbolize some stuff for openmaptiles
+			country_name: [],
+			marine_name: [],
+			state_name: [],
+			place_name: [],
+			waterway_name: [],
+			poi_name: [],
+			road_name: [],
+			housenum_name: [],
+		};
+		
+	function addVectorLayer(url, bounds, minZoom, maxZoom, attribution)
+	{
+		if (tileLayer != null)
+			map.removeLayer(tileLayer);
+			
+		tileLayer = L.vectorGrid.protobuf( url, {
+				rendererFactory: L.canvas.tile,
+				vectorTileLayerStyles: vectorTileStyling,
+				attribution: attribution,
+			}
+		).addTo( map );
+		
+		map.setMinZoom(minZoom);
+		map.setMaxZoom(maxZoom);
+		//map.setMaxBounds(bounds);
+		//map.fitBounds(bounds);
+	
+		map.removeControl(locateControl);
+		locateControl = L.control.locate({flyTo: true, icon:"fas fa-map-marker-alt", locateOptions: {maxZoom: maxZoom}}).addTo(map);
+		
+	}
+
+
+     var markers = null;
+	 
+	function addMarkers(geojson)
+	{
+		var onEachFeature = function (feature, layer) 
+		{
+			if (feature.properties) {
+				if (feature.properties.number != undefined)
+					layer.on('click', function (e) {Android.onClickMarker(feature.properties.number);});
+				if (feature.properties.name)
+					layer.bindPopup(feature.properties.name);
+			}
+		}
+		
+		markers = L.geoJSON(geojson, {
+			onEachFeature: onEachFeature
+}		).addTo(map);
+		var bounds = bounds = markers.getBounds().pad(0.01);
+		map.fitBounds(bounds);
+	}
+		
+	addMarkers({"type": "FeatureCollection","features": [{"type": "Feature","properties": {"number": 0,"name": "Cenus Bureau"},"geometry": {"type": "Point","coordinates": [-76.931098,38.848390]}},{"type": "Feature","properties": {"number": 1,"name": "Metro"},"geometry": {"type": "Point","coordinates": [-76.932526,38.844245]}},{"type": "Feature","properties": {"number": 2,"name": "Popeyes"},"geometry": {"type": "Point","coordinates": [-76.926732,38.845582]}},{"type": "Feature","properties": {"number": 3,"name": "First Cash Pawn"},"geometry": {"type": "Point","coordinates": [-76.927177,38.845473]}},{"type": "Feature","properties": {"number": 4,"name": "Goodyear"},"geometry": {"type": "Point","coordinates": [-76.928041,38.844646]}},{"type": "Feature","properties": {"number": 5,"name": "Number 1 Carry Out"},"geometry": {"type": "Point","coordinates": [-76.928867,38.843917]}},{"type": "Feature","properties": {"number": 6,"name": "Best 1 Convenience"},"geometry": {"type": "Point","coordinates": [-76.928667,38.844027]}},{"type": "Feature","properties": {"number": 7,"name": "Elite Barbers"},"geometry": {"type": "Point","coordinates": [-76.928742,38.843991]}},{"type": "Feature","properties": {"number": 8,"name": "Silver Hill Liquors"},"geometry": {"type": "Point","coordinates": [-76.928860,38.843913]}},{"type": "Feature","properties": {"number": 9,"name": "Number 1 Carry Out"},"geometry": {"type": "Point","coordinates": [-76.928899,38.843888]}},{"type": "Feature","properties": {"number": 10,"name": "Food for Life"},"geometry": {"type": "Point","coordinates": [-76.922505,38.846992]}},{"type": "Feature","properties": {"number": 11,"name": "Royce TV"},"geometry": {"type": "Point","coordinates": [-76.922261,38.846796]}},{"type": "Feature","properties": {"number": 12,"name": "We R One"},"geometry": {"type": "Point","coordinates": [-76.922382,38.846932]}},{"type": "Feature","properties": {"number": 13,"name": "Galaxy Food"},"geometry": {"type": "Point","coordinates": [-76.922806,38.847118]}},{"type": "Feature","properties": {"number": 14,"name": "Silvestre Chicken"},"geometry": {"type": "Point","coordinates": [-76.924657,38.847926]}},{"type": "Feature","properties": {"number": 15,"name": "Exxon"},"geometry": {"type": "Point","coordinates": [-76.924625,38.848325]}},{"type": "Feature","properties": {"number": 16,"name": "Annie Hair Braiding"},"geometry": {"type": "Point","coordinates": [-76.924807,38.847970]}},{"type": "Feature","properties": {"number": 17,"name": "Hunter Memorial Church"},"geometry": {"type": "Point","coordinates": [-76.925349,38.846700]}},{"type": "Feature","properties": {"number": 18,"name": "Sheet Metal Workers International Association"},"geometry": {"type": "Point","coordinates": [-76.925483,38.847383]}},{"type": "Feature","properties": {"number": 19,"name": "Subway"},"geometry": {"type": "Point","coordinates": [-76.927382,38.850508]}},{"type": "Feature","properties": {"number": 20,"name": "Dollar General"},"geometry": {"type": "Point","coordinates": [-76.927171,38.850411]}},{"type": "Feature","properties": {"number": 21,"name": "Post Office"},"geometry": {"type": "Point","coordinates": [-76.929448,38.851255]}},{"type": "Feature","properties": {"number": 22,"name": "Ameritech Tires"},"geometry": {"type": "Point","coordinates": [-76.929815,38.851604]}},{"type": "Feature","properties": {"number": 23,"name": "Shell"},"geometry": {"type": "Point","coordinates": [-76.922505,38.846992]}},{"type": "Feature","properties": {"number": 24,"name": "Census Auto Repairs"},"geometry": {"type": "Point","coordinates": [-76.931712,38.852225]}},{"type": "Feature","properties": {"number": 25,"name": "Bradbury Recreation Center"},"geometry": {"type": "Point","coordinates": [-76.933541,38.857865]}},{"type": "Feature","properties": {"number": 26,"name": "NOAA Satellite Operations Facility"},"geometry": {"type": "Point","coordinates": [-76.936717,38.851824]}},{"type": "Feature","properties": {"number": 27,"name": "National Archives"},"geometry": {"type": "Point","coordinates": [-76.941770,38.851247]}},{"type": "Feature","properties": {"number": 28,"name": "National Maritime Intelligence Center"},"geometry": {"type": "Point","coordinates": [-76.936282,38.848949]}},{"type": "Feature","properties": {"number": 29,"name": "Suitland House"},"geometry": {"type": "Point","coordinates": [-76.931647,38.846747]}},{"type": "Feature","properties": {"number": 30,"name": "Child Care Center"},"geometry": {"type": "Point","coordinates": [-76.933616,38.849707]}},]});
+	
+	function addMarker(num, lat, lon, label)
+	{
+		L.marker([lat,lon]).addTo(map).on('click', function (e) {Android.onClickMarker(num);});
+	}
+	
+	function flyTo(lat, lon, zoom)
+	{
+		map.flyTo([lat, lon], zoom)
+	}
+
+	function openMarkerPopup(markerName)
+	{
+		var marker = markers.getLayers().find(function (e) {return e.feature && e.feature.properties && e.feature.properties.name == markerName;});
+		console.log("Found marker " + marker);
+		if (marker)
+			marker.openPopup();
+	}
+
+    </script>
+</body>
+</html>

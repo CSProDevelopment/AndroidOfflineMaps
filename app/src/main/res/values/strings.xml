@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Android Offline Maps</string>
+    <string name="choose_tile_source">Tile source...</string>
+    <string name="choose_sdk">Map SDK...</string>
+</resources>
