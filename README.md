@@ -1,6 +1,8 @@
 # AndroidOfflineMaps
 Test bed for displaying offline maps on Android
 
+![screenshot](./img/Screenshot_1.png)
+
 Example Android application that displays offline maps using various mapping SDKs:
 
 * [Google Maps SDK for Android](https://developers.google.com/maps/documentation/android-sdk/intro)
